@@ -19,7 +19,8 @@ def rolling_statistics(df, col_name, window_size=365):
     std_series = series.rolling(window=window_size).std()
     return mean_series.to_frame(), std_series.to_frame()
 
-def adfuller_test(df, col_name, window_size=365):
+def adfuller_test(df, col_name, window_size=365, lags=12):
+    # stationarity check
     raw_series = df[col_name].dropna().astype(np.float)
     raw_series_values = raw_series.values
 
@@ -27,34 +28,24 @@ def adfuller_test(df, col_name, window_size=365):
     detrended_series = detrended_df[col_name].dropna().astype(np.float)
     detrended_series_values = detrended_series.values
 
-    lagged_df = lag_differenced(df, col_name, window_size)
+    lagged_df = lag_differenced(df, col_name, lags)
     lagged_series = lagged_df[col_name].dropna().astype(np.float)
     lagged_series_values = lagged_series.values
 
-    print(" > Is the data stationary ?")
-    dftest = adfuller(raw_series_values, autolag='AIC')
-    print("Test statistic = {:.3f}".format(dftest[0]))
-    print("P-value = {:.3f}".format(dftest[1]))
-    print("Critical values :")
-    for k, v in dftest[4].items():
-        print("\t{}: {} - The data is {} stationary with {}% confidence".format(k, v, "not" if v < dftest[0] else "",
-                                                                                100 - int(k[:-1])))
+    list = [raw_series_values, detrended_series_values, lagged_series_values]
 
-    print("\n > Is the de-trended data stationary ?")
-    dftest = adfuller(detrended_series_values, autolag='AIC')
-    print("Test statistic = {:.3f}".format(dftest[0]))
-    print("P-value = {:.3f}".format(dftest[1]))
-    print("Critical values :")
-    for k, v in dftest[4].items():
-        print("\t{}: {} - The data is {} stationary with {}% confidence".format(k, v, "not" if v < dftest[0] else "",
-                                                                                100 - int(k[:-1])))
-
-    print("\n > Is the 12-lag differenced de-trended data stationary ?")
-    dftest = adfuller(lagged_series_values, autolag='AIC')
-    print("Test statistic = {:.3f}".format(dftest[0]))
-    print("P-value = {:.3f}".format(dftest[1]))
-    print("Critical values :")
-    for k, v in dftest[4].items():
-        print("\t{}: {} - The data is {} stationary with {}% confidence".format(k, v, "not" if v < dftest[0] else "",
-                                                                                100 - int(k[:-1])))
-
+    for i in range(len(list)):
+        if i == 0:
+            print(" > Is the data stationary ?")
+        elif i == 1:
+            print("\n > Is the de-trended data stationary ?")
+        else:
+            print("\n > Is the lag differenced de-trended data stationary ?")
+        dftest = adfuller(list[i], autolag='AIC')
+        print("Test statistic = {:.3f}".format(dftest[0]))
+        print("P-value = {:.3f}".format(dftest[1]))
+        print("Critical values :")
+        for k, v in dftest[4].items():
+            print(
+                "\t{}: {} - The data is {} stationary with {}% confidence".format(k, v, "not" if v < dftest[0] else "",
+                                                                                  100 - int(k[:-1])))

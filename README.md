@@ -4,9 +4,6 @@
 historical bid/ask/trade prices, and, where available, volumes, with (i) 1-min frequency and (ii) 1-day frequency for KTB Futures and EUR currency. 
 In this project, I choose EUR as analysis target.
 
-### User guide
-
-
 ### Manipulation of data
 `preprocess.py`, `data.py`
 <br/> input and output are both dataframes
@@ -23,13 +20,28 @@ In this project, I choose EUR as analysis target.
 7. Autocorrelation plots
 <br/> correlation between the series with its lags
 
-
 ### Visualization
 `visualization.py`
 1. plot raw data: `plot`, `plot_price`, `plot_volume`
 2. plot seasonal decomposition: `seasonal_decompose`
 3. plot rolling statistics for raw/detrended/lag differenced data: `plot_rolling_statistics`
 4. plot acf and pacf: `plot_acf_pacf`
+
+### Models 
+<br/> (only researched on the topic, haven't been implemented)
+1. Simple Exponential Smoothing Model
+<br/> -When to use? No trend or seasonality
+<br/> SES only has one component called level (with a smoothing parameter denoted as “alpha” below). 
+It is a weighted average of the previous level and the current observation:
+<br/> ![math](./images/Simple%20Exponential%20Smoothing%20Model.png )
+
+1. Holt’s Linear Smoothing Model
+<br/> - When to use? For data that has trend but no seasonality
+<br/> - Smoothing methods work as weighted averages
+<br/> ![math](./images/Holt’s%20Linear%20Smoothing%20Model.png )
+
+
+
 
 ### Time series analysis
 #### Properties and types of series

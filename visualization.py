@@ -29,10 +29,10 @@ def seasonal_decompose(df, col_name, freq, model='additive'):
 
     return decompose
 
-def plot_rolling_statistics(df, col_name, window_size=365):
+def plot_rolling_statistics(df, col_name, window_size=365, lags=12):
     raw_df = df[col_name].dropna().astype(np.float).to_frame()
-    detrended_df = detrend(df, col_name,window_size)
-    lagged_df = lag_differenced(df, col_name, window_size)
+    detrended_df = detrend(df, col_name, window_size)
+    lagged_df = lag_differenced(df, col_name, lags)
 
     raw_mean_df, raw_std_df = rolling_statistics(raw_df, col_name, window_size)
     detrended_mean_df, detrended_std_df = rolling_statistics(detrended_df, col_name, window_size)
