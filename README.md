@@ -1,4 +1,4 @@
-# raw KTB EUR numbers
+# Time series analysis and visualization
 
 ### Data source
 historical bid/ask/trade prices, and, where available, volumes, with (i) 1-min frequency and (ii) 1-day frequency for KTB Futures and EUR currency. 
