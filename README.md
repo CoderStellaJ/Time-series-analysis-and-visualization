@@ -1,5 +1,13 @@
 # Time series analysis and visualization
 
+### Overview
+This repository provides data preprocessing (`preprocess.py`), manipulation functions (`data.py`)
+and visualization (`visualization.py`). 
+This `README.md` contains user guide and some time series analysis related topics I learned these days.
+
+### User guide
+please open `Demo.ipynb` jupyter notebook. I covered the usage of data manipulation functions and visualization inside it.
+
 ### Data source
 historical bid/ask/trade prices, and, where available, volumes, with (i) 1-min frequency and (ii) 1-day frequency for KTB Futures and EUR currency. 
 In this project, I choose EUR as analysis target.
@@ -28,7 +36,7 @@ In this project, I choose EUR as analysis target.
 4. plot acf and pacf: `plot_acf_pacf`
 
 ### Models 
-<br/> (only researched on the topic, haven't been implemented)
+(only researched on the topic, haven't been implemented)
 1. Simple Exponential Smoothing Model
 <br/> -When to use? No trend or seasonality
 <br/> SES only has one component called level (with a smoothing parameter denoted as “alpha” below). 
