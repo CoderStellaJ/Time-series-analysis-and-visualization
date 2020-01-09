@@ -41,12 +41,12 @@ In this project, I choose EUR as analysis target.
 <br/> -When to use? No trend or seasonality
 <br/> SES only has one component called level (with a smoothing parameter denoted as “alpha” below). 
 It is a weighted average of the previous level and the current observation:
-<br/> ![math](./images/Simple%20Exponential%20Smoothing%20Model.png )
+<br/> ![math](./images/Simple_Exponential_Smoothing_Model.png)
 
 1. Holt’s Linear Smoothing Model
 <br/> - When to use? For data that has trend but no seasonality
 <br/> - Smoothing methods work as weighted averages
-<br/> ![math](./images/Holt’s%20Linear%20Smoothing%20Model.png )
+<br/> ![math](./images/Holt_Linear_Smoothing_Model.png )
 
 
 
