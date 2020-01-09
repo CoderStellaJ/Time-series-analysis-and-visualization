@@ -7,21 +7,29 @@ In this project, I choose EUR as analysis target.
 ### User guide
 
 
-### Data analysis
+### Manipulation of data
 `preprocess.py`, `data.py`
+<br/> input and output are both dataframes
 1. raw data:
 <br/> transforms .xlsx data into time series dataframe
 2. seasonal decomposition:
 <br/> y = trend + seasonal + decomposition
 <br/> y = trend * seasonal * decomposition
-3. rolling statistics:
-<br/>
+3. de-trended data 
+4. lag differenced data
+5. rolling statistics: mean and std
+6. Augmented Dickey-Fuller test
+<br/> stationarity hypothesis test
+7. Autocorrelation plots
+<br/> correlation between the series with its lags
+
 
 ### Visualization
 `visualization.py`
 1. plot raw data: `plot`, `plot_price`, `plot_volume`
-2. plot seasonal decomposition
-3. 
+2. plot seasonal decomposition: `seasonal_decompose`
+3. plot rolling statistics for raw/detrended/lag differenced data: `plot_rolling_statistics`
+4. plot acf and pacf: `plot_acf_pacf`
 
 ### Time series analysis
 #### Properties and types of series
@@ -63,6 +71,11 @@ If the data is 12-month seasonal, substracting the series with a 12-lag differen
 in the case where the compound rate in the trend is not due to a price index (ie the series is not measured in a currency), 
 logging can help linearize a series with an exponential trend (recall that log(exp(x)) = x). 
 It does not remove an eventual trend whatsoever, unlike deflation.
+
+#### Autocorrelation plots (ACF & PACF)
+- An autocorrelation (ACF) plot represents the autocorrelation of the series with lags of itself.
+- A partial autocorrelation (PACF) plot represents the amount of correlation between a series and a lag of itself that is not explained by correlations at all lower-order lags.
+<br/> Ideally, we want no correlation between the series and lags of itself. Graphically speaking, we would like all the spikes to fall in the blue region.
 
 ### Financial concepts
 #### KTB Future

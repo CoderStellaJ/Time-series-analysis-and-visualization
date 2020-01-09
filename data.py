@@ -1,37 +1,60 @@
 import pandas as pd
+import numpy as np
+from statsmodels.tsa.stattools import adfuller
 
-def read_data():
-    dfs = pd.read_excel('./raw_KTB_EUR_numbers/raw_KTB_EUR_numbers.xlsx', sheet_name=None, parse_dates=True, index=False)
-    EUR_future_1min_sheet = dfs['EUR future 1min']
-    EUR_1min = dfs['EUR 1min']
-    EUR_1day = dfs['EUR 1day']
-    return EUR_future_1min_sheet, EUR_1min, EUR_1day
+# For one column of a dataframe
+def detrend(df, col_name, window_size=365):
+    series = df[col_name].dropna().astype(np.float)
+    detrended_series = (series - series.rolling(window=window_size).mean()) / series.rolling(window=window_size).std()
+    return detrended_series.to_frame()
 
-def preprocess_EUR_1day(EUR_1day):
-    EUR_1day = EUR_1day.set_index('Unnamed: 0')
-    EUR_1day.index.name = 'Dates'
-    EUR_1day.columns = EUR_1day.iloc[5]
-    EUR_1day = EUR_1day[6:]
-    return EUR_1day
+def lag_differenced(df, col_name, lag=12):
+    series = df[col_name].dropna().astype(np.float)
+    lagged_series = series - series.shift(lag)
+    return lagged_series.to_frame()
 
-def preprocess_EUR_1min(EUR_1min):
-    EUR_1min = EUR_1min.dropna(how='all', axis=1)
-    EUR_1min = EUR_1min.iloc[7:]
-    EUR_1min = EUR_1min.set_index('Start date')
-    del EUR_1min['Start date.1']
-    del EUR_1min['Start date.2']
-    EUR_1min.columns = ['Bid_open', 'Ask_open', 'Trade_open']
-    return EUR_1min
+def rolling_statistics(df, col_name, window_size=365):
+    series = df[col_name].dropna().astype(np.float)
+    mean_series = series.rolling(window=window_size).mean()
+    std_series = series.rolling(window=window_size).std()
+    return mean_series.to_frame(), std_series.to_frame()
 
-def preprocess_EUR_future_1min(EUR_future_1min):
-    EUR_future_1min = EUR_future_1min.set_index('Unnamed: 0')
-    EUR_future_1min.index.name = 'Dates'
+def adfuller_test(df, col_name, window_size=365):
+    raw_series = df[col_name].dropna().astype(np.float)
+    raw_series_values = raw_series.values
 
-    EUR_future_1min = EUR_future_1min.dropna(how='all', axis=1)
-    del EUR_future_1min['Unnamed: 4']
-    del EUR_future_1min['Unnamed: 8']
-    EUR_future_1min = EUR_future_1min.iloc[4:]
+    detrended_df = detrend(df,col_name,window_size)
+    detrended_series = detrended_df[col_name].dropna().astype(np.float)
+    detrended_series_values = detrended_series.values
 
-    EUR_future_1min.columns = ['Trade_open', 'Trade_volume', 'Bid_open', 'Bid_volume', 'Ask_open', 'Ask_volume']
+    lagged_df = lag_differenced(df, col_name, window_size)
+    lagged_series = lagged_df[col_name].dropna().astype(np.float)
+    lagged_series_values = lagged_series.values
 
-    return EUR_future_1min
+    print(" > Is the data stationary ?")
+    dftest = adfuller(raw_series_values, autolag='AIC')
+    print("Test statistic = {:.3f}".format(dftest[0]))
+    print("P-value = {:.3f}".format(dftest[1]))
+    print("Critical values :")
+    for k, v in dftest[4].items():
+        print("\t{}: {} - The data is {} stationary with {}% confidence".format(k, v, "not" if v < dftest[0] else "",
+                                                                                100 - int(k[:-1])))
+
+    print("\n > Is the de-trended data stationary ?")
+    dftest = adfuller(detrended_series_values, autolag='AIC')
+    print("Test statistic = {:.3f}".format(dftest[0]))
+    print("P-value = {:.3f}".format(dftest[1]))
+    print("Critical values :")
+    for k, v in dftest[4].items():
+        print("\t{}: {} - The data is {} stationary with {}% confidence".format(k, v, "not" if v < dftest[0] else "",
+                                                                                100 - int(k[:-1])))
+
+    print("\n > Is the 12-lag differenced de-trended data stationary ?")
+    dftest = adfuller(lagged_series_values, autolag='AIC')
+    print("Test statistic = {:.3f}".format(dftest[0]))
+    print("P-value = {:.3f}".format(dftest[1]))
+    print("Critical values :")
+    for k, v in dftest[4].items():
+        print("\t{}: {} - The data is {} stationary with {}% confidence".format(k, v, "not" if v < dftest[0] else "",
+                                                                                100 - int(k[:-1])))
+
